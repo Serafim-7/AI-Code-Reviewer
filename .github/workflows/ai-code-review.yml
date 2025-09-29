@@ -1,23 +1,22 @@
 name: AI Code Review
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Debug: verify repo files
+      # 2️⃣ Show directory for debugging (optional)
       - name: Show current directory
-        run: pwd
-      - name: List files
-        run: ls -la
+        run: |
+          pwd
+          ls -la
 
       # 3️⃣ Set up Python
       - name: Set up Python
@@ -32,8 +31,6 @@ jobs:
       # 5️⃣ Run the AI reviewer
       - name: Run AI reviewer
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}      # Your Hugging Face token
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided automatically
-        run: python reviewer/review.py
-
-
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}      # Hugging Face API token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub
+        run: python reviewer/review.py || true  # || true prevents workflow failure so you can debug
