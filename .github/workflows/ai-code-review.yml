@@ -1,27 +1,38 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
 jobs:
   review:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Debug: verify repo files
       - name: Show current directory
         run: pwd
-
       - name: List files
         run: ls -la
 
+      # 3️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # 5️⃣ Run the AI reviewer
       - name: Run AI reviewer
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}      # Your Hugging Face token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided automatically
         run: python reviewer/review.py
+
 
